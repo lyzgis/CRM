@@ -37,21 +37,6 @@ public class User {
     public User() {
     }
 
-    public User(String id, String loginAct, String name, String loginPwd, String email, String expireTime, String lockState, String deptno, String allowIps, String createTime, String createBy, String editTime, String editBy) {
-        this.id = id;
-        this.loginAct = loginAct;
-        this.name = name;
-        this.loginPwd = loginPwd;
-        this.email = email;
-        this.expireTime = expireTime;
-        this.lockState = lockState;
-        this.deptno = deptno;
-        this.allowIps = allowIps;
-        this.createTime = createTime;
-        this.createBy = createBy;
-        this.editTime = editTime;
-        this.editBy = editBy;
-    }
 
     public String getId() {
         return id;
