@@ -12,7 +12,7 @@
     <!--SpringMVC的配置文件，在其中声明Controller对象-->
     
     <!--声明组件扫描器-->
-    <context:component-scan base-package="com.lyz.controller" />
+    <context:component-scan base-package="com.lyz.crm.settings.web.controller" />
 
     <!--声明视图解析器-->
     <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">

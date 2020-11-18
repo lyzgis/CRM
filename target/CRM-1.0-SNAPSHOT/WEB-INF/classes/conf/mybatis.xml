@@ -9,10 +9,10 @@
         <setting name="logImpl" value="STDOUT_LOGGING"/>
     </settings>
     <typeAliases>
-        <package name="com.lyz.entity"/>
+        <package name="com.lyz.crm.settings.domain"/>
     </typeAliases>
 
     <mappers>
-        <package name="com.lyz.dao"/>
+        <package name="com.lyz.crm.settings.dao"/>
     </mappers>
 </configuration>
