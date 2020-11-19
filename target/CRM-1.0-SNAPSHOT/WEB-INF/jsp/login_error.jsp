@@ -67,9 +67,9 @@
                     * */
 
                     if(data.success){
+
+                        //跳转到工作台的初始页（欢迎页）
                         window.location.href = "workbench/index.jsp";
-                    }else {
-                        $("#msg").html(data.msg)
                     }
                 }
             })
@@ -77,7 +77,7 @@
     </script>
 </head>
 <body>
-<div style="position: absolute; top: 0px; left: 0px; height:100%;width: 60%;">
+<div style="position: absolute; top: 0px; left: 0px; width: 60%;">
     <img src="images/IMG_7114.JPG" style="width: 100%; height: 90%; position: relative; top: 50px;">
 </div>
 <div id="top" style="height: 50px; background-color: #3C3C3C; width: 100%;">
@@ -92,14 +92,14 @@
         <form action="" class="form-horizontal" role="form">
             <div class="form-group form-group-lg">
                 <div style="width: 350px;">
-                    <input class="form-control" type="text" placeholder="用户名" id="loginAct" required autocomplete='用户名'>
+                    <input class="form-control" type="text" placeholder="用户名" id="loginAct" >
                 </div>
                 <div style="width: 350px; position: relative;top: 20px;">
-                    <input class="form-control" type="password" placeholder="密码" id="loginPwd" required autocomplete='密码'>
+                    <input class="form-control" type="password" placeholder="密码" id="loginPwd" >
                 </div>
                 <div class="checkbox"  style="position: relative;top: 30px; left: 10px;">
 
-                    <span id="msg" style="color: red"></span>
+                    <span id="msg" style="color: red">${ex}</span>
 
                 </div>
                 <button type="button" id="submitBtn" class="btn btn-primary btn-lg btn-block"  style="width: 350px; position: relative;top: 45px;">登录</button>
