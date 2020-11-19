@@ -10,9 +10,11 @@
     </settings>-->
     <typeAliases>
         <package name="com.lyz.crm.settings.domain"/>
+        <package name="com.lyz.crm.workbench.domain"/>
     </typeAliases>
 
     <mappers>
         <package name="com.lyz.crm.settings.dao"/>
+        <package name="com.lyz.crm.workbench.dao"/>
     </mappers>
 </configuration>

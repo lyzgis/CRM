@@ -12,6 +12,9 @@
     <script type="text/javascript" src="jquery/bootstrap_3.3.0/js/bootstrap.min.js"></script>
     <script>
         $(function () {
+            if(window.top!=window){
+                window.top.location=window.location;
+            }
             //页面加载清空用户名、密码及错误提示框的内容
             $("#loginAct").val("");
             $("#loginPwd").val("");

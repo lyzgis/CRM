@@ -8,7 +8,7 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
 	<base href="<%=basePath%>">
 <meta charset="UTF-8">
 <link href="jquery/bootstrap_3.3.0/css/bootstrap.min.css" type="text/css" rel="stylesheet" />
-<script type="text/javascript" src="jquery/jquery-1.11.1-min.js"></script>
+<script type="text/javascript" src="jquery/jquery-3.5.1.js"></script>
 <script type="text/javascript" src="jquery/bootstrap_3.3.0/js/bootstrap.min.js"></script>
 <script type="text/javascript">
 
@@ -38,7 +38,6 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
 		
 		//在页面加载完毕后，在工作区打开相应的页面
 		window.open("workbench/main/index.html","workareaFrame");
-		
 	});
 	
 </script>
@@ -62,7 +61,7 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
 						登录帐号：<b>zhangsan</b><br><br>
 						组织机构：<b>1005，市场部，二级部门</b><br><br>
 						邮箱：<b>zhangsan@bjpowernode.com</b><br><br>
-						失效时间：<b>2017-02-14 10:10:10</b><br><br>
+						失效时间：<b>2021-02-14 10:10:10</b><br><br>
 						允许访问IP：<b>127.0.0.1,192.168.100.2</b>
 					</div>
 				</div>
@@ -138,7 +137,7 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
 	
 	<!-- 顶部 -->
 	<div id="top" style="height: 50px; background-color: #3C3C3C; width: 100%;">
-		<div style="position: absolute; top: 5px; left: 0px; font-size: 30px; font-weight: 400; color: white; font-family: 'times new roman'">CRM &nbsp;<span style="font-size: 12px;">&copy;2017&nbsp;动力节点</span></div>
+		<div style="position: absolute; top: 5px; left: 0px; font-size: 30px; font-weight: 400; color: white; font-family: 'times new roman'">CRM客户关系管理系统 &nbsp;<span style="font-size: 12px;">&copy;2020&nbsp;JXNU_LYZ</span></div>
 		<div style="position: absolute; top: 15px; right: 15px;">
 			<ul>
 				<li class="dropdown user-dropdown">

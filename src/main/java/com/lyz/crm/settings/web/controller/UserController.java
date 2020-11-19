@@ -71,7 +71,7 @@ public class UserController {
 
         //向前端返回验证结果
         String resultJson = PrintJson.printJsonFlag(true);
-
         return resultJson;
     }
+
 }

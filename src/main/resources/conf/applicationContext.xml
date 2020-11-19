@@ -28,8 +28,17 @@
         <property name="basePackage" value="com.lyz.crm.settings.dao" />
     </bean>
 
-    <!--声明service的注解@Service所在的包名位置-->
+    <!--声明mybatis扫描器，创建dao对象-->
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory" />
+        <property name="basePackage" value="com.lyz.crm.workbench.dao" />
+    </bean>
+
+    <!--声明setings模块service的注解@Service所在的包名位置-->
     <context:component-scan base-package="com.lyz.crm.settings.service"/>
+
+    <!--声明workbench模块service的注解@Service所在的包名位置-->
+    <context:component-scan base-package="com.lyz.crm.workbench.service" />
 
 
 </beans>

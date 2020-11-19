@@ -8,6 +8,8 @@ import com.lyz.crm.utils.DateTimeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class UserServiceImpl implements UserService{
     //引入dao对象
@@ -22,5 +24,12 @@ public class UserServiceImpl implements UserService{
         User userRes = userDao.selectUser(user);
 
         return userRes;
+    }
+
+    @Override
+    public List<User> getUserList() {
+        List<User> userList = userDao.getUserList();
+
+        return userList;
     }
 }
