@@ -5,15 +5,19 @@ import com.lyz.crm.settings.service.UserService;
 import com.lyz.crm.utils.DateTimeUtil;
 import com.lyz.crm.utils.PrintJson;
 import com.lyz.crm.utils.UUIDUtil;
+import com.lyz.crm.vo.PageListVo;
 import com.lyz.crm.workbench.domain.Activity;
 import com.lyz.crm.workbench.service.ActivityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/workbench/activity")
@@ -69,4 +73,33 @@ public class ActivityController {
         return resultJson;
     }
 
+    @RequestMapping("/pageList.do")
+    @ResponseBody
+    public String pageList(Integer pageNo,Integer pageSize){
+        //因为条件查询的条件可能为空，所以不适用activity对象接收参数
+        System.out.println(pageNo +"    " + pageSize);
+        String name = req.getParameter("name");
+        String owner = req.getParameter("owner");
+        String startDate = req.getParameter("startDate");
+        String endDate = req.getParameter("endDate");
+        //计算分页跳过的数据条数
+        int skipCount = (pageNo - 1)*pageSize;
+
+        //将参数放入Map集合中
+        Map<String,Object> map = new HashMap<String,Object>();
+        map.put("name", name);
+        map.put("owner", owner);
+        map.put("startDate",startDate);
+        map.put("endDate",endDate);
+        map.put("skipCount",skipCount);
+        map.put("pageSize",pageSize);
+
+
+        //将前端的参数传递给service方法
+        PageListVo<Activity> vo = activityService.pageList(map);
+
+        //将查询结果转为json，传到前端
+        String result = PrintJson.printJsonObj(vo);
+        return result;
+    }
 }

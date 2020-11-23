@@ -53,7 +53,7 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
 					type:"get",
 					dataType:"json",
 					success:function (data) {
-						console.log(data);
+						//console.log(data);
 						var html = "<option></option>";
 
 						//遍历出来的每一个n，就是每一个user对象
@@ -97,7 +97,7 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
 						if(data.success){
 							//添加成功后
 							//刷新市场活动信息列表（局部刷新）
-							//pageList(1,2);
+							pageList(1,2);
 
 							/*
                             *
@@ -147,15 +147,103 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
 							//关闭添加操作的模态窗口
 							$("#createActivityModal").modal("hide");
 
-							alert("添加成功！")
+							//alert("添加成功！")
 						}else{
 							alert("市场活动添加失败！")
 						}
 					}
 				})
 			})
+
+			//点击查询按钮查询市场活动
+			$("#searchBtn").click(function () {
+				/*
+
+				点击查询按钮的时候，我们应该将搜索框中的信息保存起来,保存到隐藏域中
+
+
+			 */
+
+				$("#hidden-name").val($.trim($("#search-name").val()));
+				$("#hidden-owner").val($.trim($("#search-owner").val()));
+				$("#hidden-startDate").val($.trim($("#search-startDate").val()));
+				$("#hidden-endDate").val($.trim($("#search-endDate").val()));
+
+				//默认显示最新的两条数据
+				pageList(1,2);
+			})
 		})
 
+		//用于处理分页逻辑的函数
+		function pageList(pageNo,pageSize) {
+
+			//向后端发起Ajax请求
+			$.ajax({
+
+				url: "workbench/activity/pageList.do",
+				data:{
+					"pageNo" : pageNo,
+					"pageSize" : pageSize,
+					"owner" : $.trim($("#search-owner").val()),
+					"name" : $.trim($("#search-name").val()),
+					"startDate" : $.trim($("#search-startDate").val()),
+					"endDate" : $.trim($("#search-endDate").val())
+				},
+				type: "get",
+				dataType: "json",
+				success:function (data) {
+					/*
+					data
+						[{市场活动1},{2},{3}] List<Activity> aList
+						分页插件需要的：查询出来的总记录数
+						{"total":100} int total
+						{"total":100,"dataList":[{市场活动1},{2},{3}]}
+				 */
+
+					console.log(data);
+					var html = "";
+
+					//每一个n就是每一个市场活动对象
+					$.each(data.dataList,function (i,n) {
+
+						html += '<tr class="active">';
+						html += '<td><input type="checkbox" name="xz" value="'+n.id+'"/></td>';
+						html += '<td><a style="text-decoration: none; cursor: pointer;" onclick="window.location.href=\'workbench/activity/detail.do?id='+n.id+'\';">'+n.name+'</a></td>';
+						html += '<td>'+n.owner+'</td>';
+						html += '<td>'+n.startDate+'</td>';
+						html += '<td>'+n.endDate+'</td>';
+						html += '</tr>';
+					})
+
+					$("#activityBody").html(html);
+
+					//计算总页数
+					var totalPages = data.total%pageSize==0?data.total/pageSize:parseInt(data.total/pageSize)+1;
+
+					//数据处理完毕后，结合分页查询，对前端展现分页信息
+					$("#activityPage").bs_pagination({
+						currentPage: pageNo, // 页码
+						rowsPerPage: pageSize, // 每页显示的记录条数
+						maxRowsPerPage: 20, // 每页最多显示的记录条数
+						totalPages: totalPages, // 总页数
+						totalRows: data.total, // 总记录条数
+
+						visiblePageLinks: 3, // 显示几个卡片
+
+						showGoToPage: true,
+						showRowsPerPage: true,
+						showRowsInfo: true,
+						showRowsDefaultInfo: true,
+
+						//该回调函数时在，点击分页组件的时候触发的
+						onChangePage : function(event, data){
+							pageList(data.currentPage , data.rowsPerPage);
+						}
+					});
+				}
+
+			})
+		}
 	</script>
 </head>
 <body>
@@ -399,7 +487,7 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
 						</tr>
 					</thead>
 					<tbody id="activityBody">
-						<tr class="active">
+						<%--<tr class="active">
 							<td><input type="checkbox" /></td>
 							<td><a style="text-decoration: none; cursor: pointer;" onclick="window.location.href='workbench/activity/detail.jsp';">发传单</a></td>
                             <td>zhangsan</td>
@@ -412,7 +500,7 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
                             <td>zhangsan</td>
                             <td>2020-10-10</td>
                             <td>2020-10-20</td>
-                        </tr>
+                        </tr>--%>
 					</tbody>
 				</table>
 			</div>

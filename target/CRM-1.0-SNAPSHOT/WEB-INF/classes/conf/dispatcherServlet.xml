@@ -34,7 +34,7 @@
     <!--注册拦截器，拦截用户恶意登录-->
     <mvc:interceptors>
         <mvc:interceptor>
-            <mvc:mapping path="/**"/>
+            <mvc:mapping path="/*"/>
             <!-- 需排除拦截的地址 -->
             <mvc:exclude-mapping path="/settings/user/login.do"/>
             <bean id="interceptor" class="com.lyz.crm.interceptor.LoginInterceptor"/>
