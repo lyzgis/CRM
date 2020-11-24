@@ -9,7 +9,7 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
 	<meta charset="UTF-8">
 	<link href="jquery/bootstrap_3.3.0/css/bootstrap.min.css" type="text/css" rel="stylesheet" />
 	<link href="jquery/bootstrap-datetimepicker-master/css/bootstrap-datetimepicker.min.css" type="text/css" rel="stylesheet" />
-	<script type="text/javascript" src="jquery/jquery-3.5.1.js"></script>
+	<script type="text/javascript" src="jquery/jquery-1.11.1-min.js"></script>
 	<script type="text/javascript" src="jquery/bootstrap_3.3.0/js/bootstrap.min.js"></script>
 	<script type="text/javascript" src="jquery/bootstrap-datetimepicker-master/js/bootstrap-datetimepicker.js"></script>
 	<script type="text/javascript" src="jquery/bootstrap-datetimepicker-master/locale/bootstrap-datetimepicker.zh-CN.js"></script>
@@ -31,18 +31,24 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
 				suffix: [],
 				meridiem: ["上午", "下午"]
 			};
+			//页面加载完毕后触发一个方法
+			//默认展开列表的第一页，每页展现两条记录
+			pageList(1,2);
+
+			//bootstrap日期拾取器
+			$(".time").datetimepicker({
+				minView: "month",
+				language:  'zh-CN',
+				format: 'yyyy-mm-dd',
+				autoclose: true,
+				todayBtn: true,
+				pickerPosition: "bottom-left"
+			});
 
 			//为创建按钮绑定事件，打开添加操作的模态窗口
 			$("#addBtn").click(function () {
 
-				$(".time").datetimepicker({
-					minView: "month",
-					language:  'zh-CN',
-					format: 'yyyy-mm-dd',
-					autoclose: true,
-					todayBtn: true,
-					pickerPosition: "bottom-left"
-				});
+
 				/*
 				* 操作模态窗口：获取模态窗口对象，调用其modal方法，传递show/hide参数
 				* */
@@ -69,7 +75,7 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
 						var id = "${user.id}";
 
 						$("#create-owner").val(id);
-						//所有者下拉框处理完毕后，展现模态窗口
+						//所有的下拉框处理完毕后，展现模态窗口
 						$("#createActivityModal").modal("show");
 					}
 
@@ -172,10 +178,184 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
 				//默认显示最新的两条数据
 				pageList(1,2);
 			})
-		})
+
+			//添加全选框操作
+			$("#qx").click(function () {
+				//获取分页中其它单选框元素,根据全选框的选中状态改变
+				$("input[name=xz]").prop("checked",this.checked)
+
+			})
+
+			//通过其它单选框改变全选框的状态
+			$("#activityBody").on("click",$("input[name=xz]"),function () {
+				//改变全选框的选中状态
+				$("#qx").prop("checked",$("input[name=xz]").length==$("input[name=xz]:checked".length));
+			})
+
+			//删除市场活动
+			$("#deleteBtn").click(function () {
+
+				//找到复选框中所有挑√的复选框的jquery对象
+				var $xz = $("input[name=xz]:checked");
+
+				if($xz.length==0) {
+
+					alert("请选择需要删除的记录！");
+
+					//肯定选了，而且有可能是1条，有可能是多条
+				}else{
+					if(confirm("确定删除这些记录吗？")){
+						//url:workbench/activity/delete.do?id=xxx&id=xxx&id=xxx
+
+						//拼接参数
+						var param = "";
+
+						//将$xz中的每一个dom对象遍历出来，取其value值，就相当于取得了需要删除的记录的id
+						for(var i=0;i<$xz.length;i++){
+
+							param += "id="+$($xz[i]).val();
+
+							//如果不是最后一个元素，需要在后面追加一个&符
+							if(i<$xz.length-1){
+
+								param += "&";
+
+							}
+
+						}
+
+						//alert(param);
+						$.ajax({
+
+							url : "workbench/activity/delete.do",
+							data : param,
+							type : "post",
+							dataType : "json",
+							success : function (data) {
+
+								/*
+                                    data
+                                        {"success":true/false}
+                                 */
+								if(data.success){
+
+									//删除成功后
+									//回到第一页，维持每页展现的记录数
+									pageList(1,2);
+
+
+								}else{
+
+									alert("删除市场活动失败");
+
+								}
+							}
+						})
+					}
+				}
+			})
+
+			//修改市场活动
+			//从后端取出用户列表和选中的市场活动
+			$("#editBtn").click(function () {
+
+				//找到复选框中所有挑√的复选框的jquery对象
+				var $xz = $("input[name=xz]:checked");
+
+				if($xz.length == 0){
+					alert("请选择需要修改的市场活动记录！")
+				}else if($xz.length > 1){
+					alert("一次只能修改一条记录！")
+				}else{
+					//只选择了一条记录，向后台发送ajax请求获取用户列表和市场活动记录
+					var id = $xz.val();
+					//console.log(id);
+
+					$.ajax({
+
+							url : "workbench/activity/getUserAndActivity.do",
+							data : {
+								"id":id
+							},
+							type : "get",
+							dataType : "json",
+							success : function (data) {
+
+								/*
+								* 前端需要的是uList和activity对象信息
+								* data
+								* {"uList":[{"张三"},{"李四"}，...],"a":[{id},{name},...]}
+								* */
+								//向下拉列表中拼接数据
+								var html = "<option></option>";
+
+								$.each(data.uList,function (i,n) {
+									html += "<option value='"+n.id+"'>"+n.name+"</option>";
+								})
+
+								$("#edit-owner").html(html);
+
+								//向修改模态窗口中的各个元素赋值
+								$("#edit-id").val(data.a.id);//用一个隐藏域存储id信息
+								$("#edit-name").val(data.a.name);
+								$("#edit-owner").val(data.a.owner);
+								$("#edit-startDate").val(data.a.startDate);
+								$("#edit-endDate").val(data.a.endDate);
+								$("#edit-cost").val(data.a.cost);
+								$("#edit-description").val(data.a.description);
+
+								//处理完元素之后，弹出模态窗口
+								$("#editActivityModal").modal("show");
+
+							}
+					})
+
+				}
+			})
+
+			//为市场活动更新按钮绑定事件
+			$("#updateBtn").click(function () {
+
+				//向后端发送ajax请求
+				$.ajax({
+					url:"workbench/activity/update.do",
+					data:{
+						"id" : $.trim($("#edit-id").val()),
+						"owner" : $.trim($("#edit-owner").val()),
+						"name" : $.trim($("#edit-name").val()),
+						"startDate" : $.trim($("#edit-startDate").val()),
+						"endDate" : $.trim($("#edit-endDate").val()),
+						"cost" : $.trim($("#edit-cost").val()),
+						"description" : $.trim($("#edit-description").val())
+
+					},
+					type:"post",
+					dataType:"json",
+					success:function (data) {
+						if(data.success){
+							//添加成功后
+							//刷新市场活动信息列表（局部刷新）
+							pageList(1,2);
+
+
+							//关闭添加操作的模态窗口
+							$("#editActivityModal").modal("hide");
+
+							//alert("更新成功！")
+						}else{
+							alert("市场活动更新失败！")
+						}
+					}
+				})
+
+			})
+		});
 
 		//用于处理分页逻辑的函数
 		function pageList(pageNo,pageSize) {
+
+			//将全选框设置为未选中
+			$("#qx").prop("checked",false);
 
 			//向后端发起Ajax请求
 			$.ajax({
@@ -200,7 +380,7 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
 						{"total":100,"dataList":[{市场活动1},{2},{3}]}
 				 */
 
-					console.log(data);
+					//console.log(data);
 					var html = "";
 
 					//每一个n就是每一个市场活动对象
@@ -268,14 +448,13 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
 
 					<form class="form-horizontal" role="form">
 
+						<%--存储修改窗口的id信息隐藏域--%>
 						<input type="hidden" id="edit-id"/>
 
 						<div class="form-group">
 							<label for="edit-marketActivityOwner" class="col-sm-2 control-label">所有者<span style="font-size: 15px; color: red;">*</span></label>
 							<div class="col-sm-10" style="width: 300px;">
 								<select class="form-control" id="edit-owner">
-
-
 
 								</select>
 							</div>
@@ -314,7 +493,7 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
 												我们所有的对于textarea的取值和赋值操作，应该统一使用val()方法（而不是html()方法）
 
 								-->
-								<textarea class="form-control" rows="3" id="edit-description">123</textarea>
+								<textarea class="form-control" rows="3" id="edit-description"></textarea>
 							</div>
 						</div>
 
@@ -361,11 +540,11 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
 						<div class="form-group">
 							<label for="create-startTime" class="col-sm-2 control-label">开始日期</label>
 							<div class="col-sm-10" style="width: 300px;">
-								<input type="text" class="form-control time" id="create-startDate" readonly>
+								<input type="text" class="form-control time" id="create-startDate">
 							</div>
 							<label for="create-endTime" class="col-sm-2 control-label">结束日期</label>
 							<div class="col-sm-10" style="width: 300px;">
-								<input type="text" class="form-control time" id="create-endDate" readonly>
+								<input type="text" class="form-control time" id="create-endDate" >
 							</div>
 						</div>
                         <div class="form-group">
@@ -434,14 +613,14 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
 
 				  <div class="form-group">
 				    <div class="input-group">
-				      <div class="input-group-addon">开始日期</div>
-					  <input class="form-control" type="text" id="search-startDate" />
+				      <div class="input-group-addon ">开始日期</div>
+					  <input class="form-control time" type="text" id="search-startDate" />
 				    </div>
 				  </div>
 				  <div class="form-group">
 				    <div class="input-group">
-				      <div class="input-group-addon">结束日期</div>
-					  <input class="form-control" type="text" id="search-endDate">
+				      <div class="input-group-addon ">结束日期</div>
+					  <input class="form-control time" type="text" id="search-endDate">
 				    </div>
 				  </div>
 				  
@@ -480,7 +659,7 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
 					<thead>
 						<tr style="color: #B3B3B3;">
 							<td><input type="checkbox" id="qx"/></td>
-							<td>名称123</td>
+							<td>名称</td>
                             <td>所有者</td>
 							<td>开始日期</td>
 							<td>结束日期</td>

@@ -16,4 +16,13 @@ public interface ActivityDao {
 
     //统计市场活动总条数的方法
     int getTotalByCondition(Map<String,Object> map);
+
+    //删除市场活动信息
+    int delete(String[] ids);
+
+    //通过Id查询市场活动
+    Activity getActivityById(String id);
+
+    //更新市场活动
+    int update(Activity activity);
 }

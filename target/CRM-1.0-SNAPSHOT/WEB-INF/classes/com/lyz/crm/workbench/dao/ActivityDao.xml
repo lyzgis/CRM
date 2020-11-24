@@ -108,4 +108,38 @@
         </where>
 
     </select>
+
+    <!--删除市场活动-->
+    <delete id="delete">
+        delete
+        from tbl_activity
+        where id in
+        <foreach collection="array" item="aid" open="(" close=")" separator=",">
+            #{aid}
+        </foreach>
+    </delete>
+
+    <!--通过id查询市场活动-->
+    <select id="getActivityById" resultType="com.lyz.crm.workbench.domain.Activity">
+        select * from tbl_activity where id=#{id}
+    </select>
+    
+    <!--更新市场活动-->
+    <update id="update" >
+         update tbl_activity set
+
+        owner=#{owner},
+        name=#{name},
+        startDate=#{startDate},
+        endDate=#{endDate},
+        cost=#{cost},
+        description=#{description},
+        editTime=#{editTime},
+        editBy=#{editBy}
+
+        where id=#{id}
+
+    </update>
+
+
 </mapper>

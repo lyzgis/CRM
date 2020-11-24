@@ -8,6 +8,7 @@ import com.lyz.crm.utils.UUIDUtil;
 import com.lyz.crm.vo.PageListVo;
 import com.lyz.crm.workbench.domain.Activity;
 import com.lyz.crm.workbench.service.ActivityService;
+import org.mybatis.spring.mapper.MapperScannerConfigurer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -48,7 +49,7 @@ public class ActivityController {
         return resultJson;
     }
 
-    //获取用户列表的方法
+    //添加市场活动
     @RequestMapping("/save.do")
     @ResponseBody
     public String saveActivity(Activity activity){
@@ -77,7 +78,6 @@ public class ActivityController {
     @ResponseBody
     public String pageList(Integer pageNo,Integer pageSize){
         //因为条件查询的条件可能为空，所以不适用activity对象接收参数
-        System.out.println(pageNo +"    " + pageSize);
         String name = req.getParameter("name");
         String owner = req.getParameter("owner");
         String startDate = req.getParameter("startDate");
@@ -101,5 +101,61 @@ public class ActivityController {
         //将查询结果转为json，传到前端
         String result = PrintJson.printJsonObj(vo);
         return result;
+    }
+
+    //删除市场活动的方法
+    @RequestMapping("/delete.do")
+    @ResponseBody
+    public String deleteActivity(){
+        //
+        String ids[] = req.getParameterValues("id");
+
+        boolean flag = activityService.delete(ids);
+
+        String result = PrintJson.printJsonFlag(flag);
+
+        return result;
+    }
+
+    //获取用户列表和单条市场活动信息
+    @RequestMapping("/getUserAndActivity.do")
+    @ResponseBody
+    public String getUserAndActivity(String id){
+
+        //获取用户列表
+        List<User> uList = userService.getUserList();
+
+        //获取单条市场活动记录
+        Activity activity = activityService.getActivity(id);
+
+        Map<Object,Object> map = new HashMap<>();
+        map.put("uList",uList);
+        map.put("a",activity);
+
+        //将结果转为json返回前端
+        String result = PrintJson.printJsonObj(map);
+        return result;
+    }
+
+    //更新市场活动
+    @RequestMapping("/update.do")
+    @ResponseBody
+    public String updateActivity(Activity activity){
+
+        //获取修改时间，写入activity
+        String editTime = DateTimeUtil.getSysTime();
+
+        //获取修改人
+        String editBy = ((User) req.getSession().getAttribute("user")).getName();
+
+        activity.setEditTime(editTime);
+        activity.setEditBy(editBy);
+
+        //调用activityService获取所有用户信息
+        boolean flag = activityService.updateActivity(activity);
+
+        //向前端返回添加结果
+        String resultJson = PrintJson.printJsonFlag(flag);
+        return resultJson;
     }
 }
